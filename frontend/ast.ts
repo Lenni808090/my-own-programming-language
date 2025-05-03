@@ -1,5 +1,5 @@
 export type NodeType =
-  | "Programm"
+  | "Program"
   | "NumericLiteral"
   | "Identifier"
   | "BinaryExpr";
@@ -8,8 +8,8 @@ export interface Stmt {
   kind: NodeType;
 }
 
-export interface Programm extends Stmt {
-  kind: "Programm";
+export interface Program extends Stmt {
+  kind: "Program";
   body: Stmt[];
 }
 

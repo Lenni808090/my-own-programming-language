@@ -6,6 +6,7 @@ export enum TokenType {
   CloseParen,
   BinaryOperator,
   Let,
+  EOF, //end of file
 }
 
 
@@ -49,7 +50,8 @@ export function tokenize(sourceCode: string): Token[] {
       src[0] == "+" ||
       src[0] == "-" ||
       src[0] == "*" ||
-      src[0] == "/"
+      src[0] == "/" ||
+      src[0] == "%"
     ) {
       tokens.push(token(src.shift(), TokenType.BinaryOperator));
     } else if (src[0] == "=") {
@@ -86,7 +88,7 @@ export function tokenize(sourceCode: string): Token[] {
 
     }
   }
-
+  tokens.push(token("EndOfFile", TokenType.EOF));
   return tokens;
 }
 
