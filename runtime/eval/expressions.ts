@@ -1,4 +1,4 @@
-import { BinaryExpr, Identifier } from "../../frontend/ast.ts";
+import { AssignmentExpr, BinaryExpr, Identifier } from "../../frontend/ast.ts";
 import Enviroment from "../enviroment.ts";
 import { evaluate } from "../interpreter.ts";
 import { MK_NULL, NumberVal, RuntimeVal } from "../values.ts";
@@ -45,4 +45,14 @@ function eval_numeric_binary_expr(
 export function eval_identifier(ident: Identifier, env: Enviroment): RuntimeVal{
     const val = env.lookUpVAr(ident.symbol);
     return val
+}
+
+
+export function eval_assignment (node: AssignmentExpr, env: Enviroment): RuntimeVal {
+  if(node.assigne.kind !== "Identifier"){
+    throw "Invalid LHS inside the expr" + JSON.stringify(node.assigne);
+  }
+  
+  const varname = (node.assigne as Identifier).symbol;
+  return env.assignVar(varname, evaluate(node.value, env));
 }

@@ -1,7 +1,7 @@
 export type NodeType =
   | "Program"
   | "VarDeclaration"
-
+  | "AssignmentExpr"
   | "NumericLiteral"
   | "Identifier"
   | "BinaryExpr";
@@ -29,6 +29,13 @@ export interface BinaryExpr extends Expr {
   left: Expr;
   right: Expr;
   operator: string;
+}
+
+
+export interface AssignmentExpr extends Expr {
+  kind: "AssignmentExpr";
+  assigne: Expr,
+  value: Expr;
 }
 
 export interface Identifier extends Expr {
