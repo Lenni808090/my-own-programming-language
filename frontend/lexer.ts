@@ -1,41 +1,35 @@
-
-
 export enum TokenType {
   Number,
   Identifier,
- 
-  Let, Const,
 
- 
+  Let,
+  Const,
+
   BinaryOperator,
   Equals,
-  Comma, Colon,
+  Comma,
+  Dot,
+  Colon,
   Semikolon,
-  OpenParen,
-  CloseParen,
-  EOF, 
-  OpenBrace,
-  CloseBrace,
+  OpenParen,CloseParen, //()
+  OpenBrace,CloseBrace, //{}
+  OpenBracket,CloseBracket, //[]
+  EOF,
 }
-
 
 const KEYWORDS: Record<string, TokenType> = {
   let: TokenType.Let,
   const: TokenType.Const,
-
 };
-
 
 export interface Token {
   value: string;
   type: TokenType;
 }
 
-
 function token(value = "", type: TokenType): Token {
   return { value, type };
 }
-
 
 function isalpha(src: string) {
   return src.toUpperCase() != src.toLowerCase();
@@ -51,43 +45,42 @@ function isint(str: string) {
   return c >= bounds[0] && c <= bounds[1];
 }
 
-
 export function tokenize(sourceCode: string): Token[] {
   const tokens = new Array<Token>();
   const src = sourceCode.split("");
 
-  
   while (src.length > 0) {
-    
     if (src[0] == "(") {
       tokens.push(token(src.shift(), TokenType.OpenParen));
     } else if (src[0] == ")") {
       tokens.push(token(src.shift(), TokenType.CloseParen));
-    } 
-    else if (src[0] == "{") {
+    } else if (src[0] == "{") {
       tokens.push(token(src.shift(), TokenType.OpenBrace));
-    } 
-    else if (src[0] == "}") {
+    } else if (src[0] == "}") {
       tokens.push(token(src.shift(), TokenType.CloseBrace));
-    } 
-    else if (
-      src[0] == "+" || src[0] == "-" || src[0] == "*" || src[0] == "/" ||
+    } else if (src[0] == "[") {
+      tokens.push(token(src.shift(), TokenType.OpenBracket));
+    } else if (src[0] == "]") {
+      tokens.push(token(src.shift(), TokenType.CloseBracket));
+    }  else if (
+      src[0] == "+" ||
+      src[0] == "-" ||
+      src[0] == "*" ||
+      src[0] == "/" ||
       src[0] == "%"
     ) {
       tokens.push(token(src.shift(), TokenType.BinaryOperator));
-    } 
-    else if (src[0] == "=") {
+    } else if (src[0] == "=") {
       tokens.push(token(src.shift(), TokenType.Equals));
-    }else if(src[0] == ";"){
+    } else if (src[0] == ";") {
       tokens.push(token(src.shift(), TokenType.Semikolon));
-    }
-    else if(src[0] == ":"){
+    } else if (src[0] == ":") {
       tokens.push(token(src.shift(), TokenType.Colon));
-    }
-    else if(src[0] == ","){
+    } else if (src[0] == ",") {
       tokens.push(token(src.shift(), TokenType.Comma));
-    }
-    else {
+    } else if (src[0] == ".") {
+      tokens.push(token(src.shift(), TokenType.Dot));
+    } else {
       if (isint(src[0])) {
         let num = "";
         while (src.length > 0 && isint(src[0])) {
@@ -95,8 +88,7 @@ export function tokenize(sourceCode: string): Token[] {
         }
 
         tokens.push(token(num, TokenType.Number));
-      }
-      else if (isalpha(src[0])) {
+      } else if (isalpha(src[0])) {
         let ident = "";
         while (src.length > 0 && isalpha(src[0])) {
           ident += src.shift();
@@ -110,12 +102,11 @@ export function tokenize(sourceCode: string): Token[] {
         }
       } else if (isskippable(src[0])) {
         src.shift();
-      }
-      else {
+      } else {
         console.error(
           "Unreconized character found in source: ",
           src[0].charCodeAt(0),
-          src[0],
+          src[0]
         );
         Deno.exit(1);
       }

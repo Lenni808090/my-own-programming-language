@@ -8,3 +8,5 @@ const obj = {
     bar: true,
   },
 };
+
+pbject.compley.foo.bar

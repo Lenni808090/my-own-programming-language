@@ -10,7 +10,7 @@ async function run(filename: string) {
   const env = createGlobalEnv();
 
   const input = await Deno.readTextFile(filename);
-  const program = parser.produceAsT(input);
+  const program = parser.produceAST(input);
 
   const result = evaluate(program, env);
   console.log(result);
@@ -31,7 +31,7 @@ function repl() {
     }
 
     // Produce AST From sourc-code
-    const program = parser.produceAsT(input);
+    const program = parser.produceAST(input);
 
     const result = evaluate(program, env);
     console.log(result);
