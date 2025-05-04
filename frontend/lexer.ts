@@ -4,11 +4,12 @@ export enum TokenType {
   Number,
   Identifier,
  
-  Let,
+  Let, Const,
 
  
   BinaryOperator,
   Equals,
+  Semikolon,
   OpenParen,
   CloseParen,
   EOF, 
@@ -17,6 +18,8 @@ export enum TokenType {
 
 const KEYWORDS: Record<string, TokenType> = {
   let: TokenType.Let,
+  const: TokenType.Const,
+
 };
 
 
@@ -66,6 +69,8 @@ export function tokenize(sourceCode: string): Token[] {
     } 
     else if (src[0] == "=") {
       tokens.push(token(src.shift(), TokenType.Equals));
+    }else if(src[0] == ";"){
+      tokens.push(token(src.shift(), TokenType.Semikolon));
     }
     else {
       if (isint(src[0])) {

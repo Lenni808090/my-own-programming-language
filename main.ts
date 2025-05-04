@@ -23,7 +23,7 @@ function repl(){
         }
 
         const program = parser.produceAsT(input);
-
+        console.log(program);
         const result = evaluate(program, env);
         console.log(result);
  
