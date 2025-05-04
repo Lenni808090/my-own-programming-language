@@ -1,32 +1,39 @@
 import Parser from "./frontend/parser.ts";
-import Enviroment from "./runtime/enviroment.ts";
+import Environment, { createGlobalEnv } from "./runtime/enviroment.ts";
 import { evaluate } from "./runtime/interpreter.ts";
-import { MK_NUMBER, MK_NULL, MK_BOOL} from "./runtime/values.ts";
 
-repl();
+// repl();
+run("./test.txt");
 
+async function run(filename: string) {
+  const parser = new Parser();
+  const env = createGlobalEnv();
 
-function repl(){
-    const parser = new Parser();
-    const env = new Enviroment();
-    env.declareVar("true", MK_BOOL(true), true);
-    env.declareVar("false", MK_BOOL(false),true);
-    env.declareVar("null", MK_NULL(),true);
-    console.log("Repl v0.1");
-    while (true) {
+  const input = await Deno.readTextFile(filename);
+  const program = parser.produceAsT(input);
 
-        const input = prompt("> ");
+  const result = evaluate(program, env);
+  console.log(result);
+}
 
-        if(!input || input.includes("exit")){
-            Deno.exit(1);
-        }
+function repl() {
+  const parser = new Parser();
+  const env = createGlobalEnv();
+  // INITIALIZE REPL
+  console.log("\nRepl v0.1");
 
-        const program = parser.produceAsT(input);
-        console.log(program);
-        const result = evaluate(program, env);
-        console.log(result);
- 
-        
-        
+  // Continue Repl Until User Stops Or Types `exit`
+  while (true) {
+    const input = prompt("> ");
+    // Check for no user input or exit keyword.
+    if (!input || input.includes("exit")) {
+      Deno.exit(1);
     }
+
+    // Produce AST From sourc-code
+    const program = parser.produceAsT(input);
+
+    const result = evaluate(program, env);
+    console.log(result);
+  }
 }

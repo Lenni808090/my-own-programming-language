@@ -1,4 +1,16 @@
-import { RuntimeVal } from "./values.ts";
+import { MK_BOOL, MK_NULL, RuntimeVal } from "./values.ts";
+
+export function createGlobalEnv() {
+    const env = new Enviroment();
+    // Create Default Global Enviornment
+    env.declareVar("true", MK_BOOL(true), true);
+    env.declareVar("false", MK_BOOL(false), true);
+    env.declareVar("null", MK_NULL(), true);
+  
+    return env;
+  }
+  
+
 
 export default class Enviroment {
     private parent?: Enviroment;
@@ -44,7 +56,7 @@ export default class Enviroment {
         return this.parent.resolve(varname)
     }
 
-    public lookUpVAr(varname: string): RuntimeVal{
+    public lookUpVar(varname: string): RuntimeVal{
         const env = this.resolve(varname);
         return env.variables.get(varname) as RuntimeVal;
     }

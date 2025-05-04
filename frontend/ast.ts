@@ -2,6 +2,8 @@ export type NodeType =
   | "Program"
   | "VarDeclaration"
   | "AssignmentExpr"
+  | "Property"
+  | "ObjectLiteral"
   | "NumericLiteral"
   | "Identifier"
   | "BinaryExpr";
@@ -17,9 +19,9 @@ export interface Program extends Stmt {
 
 export interface VarDeclaration extends Stmt {
   kind: "VarDeclaration";
-  constant: boolean,
-  identifier: string,
-  value?: Expr,
+  constant: boolean;
+  identifier: string;
+  value?: Expr;
 }
 
 export interface Expr extends Stmt {}
@@ -31,19 +33,29 @@ export interface BinaryExpr extends Expr {
   operator: string;
 }
 
-
 export interface AssignmentExpr extends Expr {
   kind: "AssignmentExpr";
-  assigne: Expr,
+  assigne: Expr;
   value: Expr;
 }
 
 export interface Identifier extends Expr {
-    kind: "Identifier";
-    symbol: string;
+  kind: "Identifier";
+  symbol: string;
 }
 
 export interface NumericLiteral extends Expr {
-    kind: "NumericLiteral";
-    value: number;
+  kind: "NumericLiteral";
+  value: number;
+}
+
+export interface ObjectLiteral extends Expr {
+  kind: "ObjectLiteral";
+  properties: Property[];
+}
+
+export interface Property extends Expr {
+  kind: "Property";
+  key: string;
+  value?: Expr,
 }
