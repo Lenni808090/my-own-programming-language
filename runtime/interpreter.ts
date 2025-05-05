@@ -5,6 +5,7 @@ import {
 	CallExpr,
 	FunctionDeclaration,
 	Identifier,
+	IfStatement,
 	NumericLiteral,
 	ObjectLiteral,
 	Program,
@@ -14,6 +15,7 @@ import {
 import Environment from "./environment.ts";
 import {
 	eval_function_declaration,
+	eval_if_statement,
 	eval_program,
 	eval_var_declaration,
 } from "./eval/statements.ts";
@@ -42,6 +44,8 @@ export function evaluate(astNode: Stmt, env: Environment): RuntimeVal {
 			return eval_assignment(astNode as AssignmentExpr, env);
 		case "BinaryExpr":
 			return eval_binary_expr(astNode as BinaryExpr, env);
+		case "IfStatement":
+			return eval_if_statement(astNode as IfStatement, env)
 		case "Program":
 			return eval_program(astNode as Program, env);
 		// Handle statements

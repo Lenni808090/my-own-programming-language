@@ -1,11 +1,12 @@
 import {
 	FunctionDeclaration,
+	IfStatement,
 	Program,
 	VarDeclaration,
 } from "../../frontend/ast.ts";
 import Environment from "../environment.ts";
 import { evaluate } from "../interpreter.ts";
-import { FunctionValue, MK_NULL, RuntimeVal } from "../values.ts";
+import { BooleanVal, FunctionValue, MK_NULL, RuntimeVal } from "../values.ts";
 
 export function eval_program(program: Program, env: Environment): RuntimeVal {
 	let lastEvaluated: RuntimeVal = MK_NULL();
@@ -40,4 +41,31 @@ export function eval_function_declaration(
 	} as FunctionValue;
 
 	return env.declareVar(declaration.name, fn, true);
+}
+
+export function eval_if_statement(statement: IfStatement, env: Environment): RuntimeVal{
+	const condition = evaluate(statement.condition, env);
+	
+	if(condition.type === "boolean" && (condition as BooleanVal).value){
+
+		let result: RuntimeVal = MK_NULL();
+
+		for (const stmt of statement.thenBranch) {
+			result = evaluate(stmt, env);
+		}
+
+		return result;
+
+	}else if(statement.elseBranch){
+		let result: RuntimeVal = MK_NULL();
+
+		for(const stmt of statement.elseBranch){
+			result = evaluate(stmt, env);
+		}
+
+		return result;
+		
+	}
+
+	return MK_NULL();
 }

@@ -9,7 +9,8 @@ export type NodeType =
     | "ObjectLiteral"
     | "NumericLiteral"
     | "Identifier"
-    | "BinaryExpr";
+    | "BinaryExpr"
+    | "IfStatement";
 
 export interface Stmt {
     kind: NodeType;
@@ -47,6 +48,13 @@ export interface BinaryExpr extends Expr {
     left: Expr;
     right: Expr;
     operator: string;
+}
+
+export interface IfStatement extends Stmt {
+    kind: "IfStatement";
+    condition: Expr;
+    thenBranch: Stmt[];
+    elseBranch?: Stmt[];
 }
 
 export interface CallExpr extends Expr {

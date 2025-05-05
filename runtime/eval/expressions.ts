@@ -8,7 +8,9 @@ import {
 import Environment from "../environment.ts";
 import { evaluate } from "../interpreter.ts";
 import {
+BooleanVal,
 	FunctionValue,
+	MK_BOOL,
 	MK_NULL,
 	NativeFnValue,
 	NumberVal,
@@ -38,16 +40,46 @@ function eval_numeric_binary_expr(
 	return { value: result, type: "number" };
 }
 
-/**
- * Evaulates expressions following the binary operation type.
- */
+function eval_comparission_expr( lhs: NumberVal, rhs: NumberVal, operator: string): BooleanVal{
+
+	let result: boolean;
+
+	switch (operator){
+		case "==":
+			result = lhs.value == rhs.value;
+			break;
+		case "!=":
+			result = lhs.value != rhs.value;
+			break;
+		case "<":
+			result = lhs.value < lhs.value;
+			break;
+		case ">":
+			result = lhs.value > lhs.value;
+			break;
+		case ">=":
+			result = lhs.value >= lhs.value;
+			break;
+		case "<=":
+			result = lhs.value <= lhs.value;	
+			break;	
+		default:
+			throw "unknown operator" + operator	
+	}
+
+	return MK_BOOL(result);
+}
+
+
 export function eval_binary_expr(
 	binop: BinaryExpr,
 	env: Environment
 ): RuntimeVal {
 	const lhs = evaluate(binop.left, env);
 	const rhs = evaluate(binop.right, env);
-
+	if(["==", "<", ">", ">=", "<=", "!="].includes(binop.operator)){
+		return eval_comparission_expr(lhs as NumberVal, rhs as NumberVal, binop.operator);
+	}
 	// Only currently support numeric operations
 	if (lhs.type == "number" && rhs.type == "number") {
 		return eval_numeric_binary_expr(
