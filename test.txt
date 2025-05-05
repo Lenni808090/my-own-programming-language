@@ -1,12 +1,6 @@
-let foo = 50 / 2;
+fn add(x, y){
+  let result = x + y;
+  print(result);
 
-const obj = {
-  x: 100,
-  y: 32,
-  foo: foo,
-  complex: {
-    bar: true,
-  },
-};
-
-pbject.compley.foo.bar
+  result
+}

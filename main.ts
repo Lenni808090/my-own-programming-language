@@ -13,7 +13,6 @@ async function run(filename: string) {
   const program = parser.produceAST(input);
 
   const result = evaluate(program, env);
-  console.log(result);
 }
 
 function repl() {

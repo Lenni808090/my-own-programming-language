@@ -1,7 +1,7 @@
-import { AssignmentExpr, BinaryExpr, Identifier, ObjectLiteral } from "../../frontend/ast.ts";
+import { AssignmentExpr, BinaryExpr, CallExpr, Identifier, ObjectLiteral } from "../../frontend/ast.ts";
 import Enviroment from "../enviroment.ts";
 import { evaluate } from "../interpreter.ts";
-import { MK_NULL, NumberVal, ObjectVal, RuntimeVal } from "../values.ts";
+import { MK_NULL, NativeFnValue, NumberVal, ObjectVal, RuntimeVal } from "../values.ts";
 
 export function eval_binary_expression(binop: BinaryExpr, env: Enviroment): RuntimeVal {
   const lhs = evaluate(binop.left, env);
@@ -70,3 +70,15 @@ export function eval_object_expr(obj: ObjectLiteral, env: Enviroment): RuntimeVa
 
   return object
 }
+
+export function eval_call_expr(expr: CallExpr, env: Enviroment): RuntimeVal {
+  const args = expr.args.map((arg) => evaluate(arg, env))
+  const fn = evaluate(expr.caller, env);
+
+  if(fn.type !== "native-fn"){
+    throw "Cannot call value thatz is not a funvtion " + JSON.stringify(fn);
+  }
+
+  const result = (fn as NativeFnValue).call(args, env);
+  return result;
+} 
