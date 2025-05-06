@@ -1,10 +1,14 @@
-const person = {
-  name: "Alice",
-  age: 30,
-  isStudent: false,
-  haus: {
-    isHoch: false,
+
+let obj = {
+  name: "John",
+  age: {
+    old: 30,
   }
 };
 
-print(person.haus.isHoch);
+
+let prop = "age";
+let prop2 = "old";
+obj[prop][prop2] = "29";
+
+print(obj.age.old);

@@ -79,10 +79,12 @@ export default class Parser {
         return this.parse_while_statement();
       default: {
         const expr = this.parse_expr();
-        this.expect(TokenType.Semicolon, "Semicolon missing in the end of line");
+        this.expect(
+          TokenType.Semicolon,
+          "Semicolon missing in the end of line"
+        );
         return expr;
       }
-      
     }
   }
 
@@ -104,10 +106,7 @@ export default class Parser {
     return { kind: "ReturnStatement", value: value } as ReturnStatement;
   }
 
-
-
   private parse_while_statement(): Stmt {
-
     this.eat();
     this.expect(
       TokenType.OpenParen,
@@ -140,8 +139,6 @@ export default class Parser {
       body,
     } as WhileStatement;
   }
-
-
 
   private parse_if_statement(): Stmt {
     this.eat();
@@ -356,7 +353,10 @@ export default class Parser {
   private parse_assignment_expr(): Expr {
     const left = this.parse_object_expr();
 
-    if (this.at().type == TokenType.Equals) {
+    if (
+      this.at().type == TokenType.Equals &&
+      (left.kind == "MemberExpr" || left.kind == "Identifier")
+    ) {
       this.eat(); // advance past equals
       const value = this.parse_assignment_expr();
       return { value, assigne: left, kind: "AssignmentExpr" } as AssignmentExpr;
@@ -575,11 +575,11 @@ export default class Parser {
         return value;
       }
 
-      case TokenType.String:{
-        return{
-          kind:"StringLiteral",
-          value: this.eat().value
-        } as StringLiteral
+      case TokenType.String: {
+        return {
+          kind: "StringLiteral",
+          value: this.eat().value,
+        } as StringLiteral;
       }
 
       // Unidentified Tokens and Invalid Code Reached
