@@ -9,6 +9,8 @@ export enum TokenType {
 
   If,Else,
 
+  While,
+
   GreaterThen,LessThen,
   GreaterThenEquals,LessThenEquals,
   EqualsEquals,NotEquals,
@@ -41,6 +43,7 @@ const KEYWORDS: Record<string, TokenType> = {
   if: TokenType.If,
   else: TokenType.Else,
   return: TokenType.Return,
+  while: TokenType.While
 };
 
 export interface Token {

@@ -11,7 +11,8 @@ export type NodeType =
     | "Identifier"
     | "BinaryExpr"
     | "IfStatement"
-    | "ReturnStatement";
+    | "ReturnStatement"
+    | "WhileStatement";
 
 export interface Stmt {
     kind: NodeType;
@@ -57,6 +58,12 @@ export interface IfStatement extends Stmt {
     thenBranch: Stmt[];
     elseIfBranches?: Array<{condition: Expr, body: Stmt[]}>;
     elseBranch?: Stmt[];
+}
+
+export interface WhileStatement extends Stmt {
+    kind: "WhileStatement";
+    condition: Expr;
+    body: Stmt[];
 }
 
 export interface CallExpr extends Expr {

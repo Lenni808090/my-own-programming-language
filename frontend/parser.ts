@@ -15,6 +15,7 @@ import {
   FunctionDeclaration,
   IfStatement,
   ReturnStatement,
+  WhileStatement,
 } from "./ast.ts";
 
 import { Token, tokenize, TokenType } from "./lexer.ts";
@@ -73,6 +74,8 @@ export default class Parser {
         return this.parse_if_statement();
       case TokenType.Return:
         return this.parse_return_statement();
+      case TokenType.While:
+        return this.parse_while_statement();
       default:
         return this.parse_expr();
     }
@@ -92,9 +95,48 @@ export default class Parser {
       TokenType.Semicolon,
       "Expected semicolon after return statement"
     );
-    
+
     return { kind: "ReturnStatement", value: value } as ReturnStatement;
   }
+
+
+
+  private parse_while_statement(): Stmt {
+
+    this.eat();
+    this.expect(
+      TokenType.OpenParen,
+      "Expected opening parenthesis after if keyword"
+    );
+    const condition = this.parse_expr();
+    this.expect(
+      TokenType.CloseParen,
+      "Expected closing parenthesis after comparision expr"
+    );
+    this.expect(
+      TokenType.OpenBrace,
+      "Expected opening brace after if comparision"
+    );
+
+    const body: Stmt[] = [];
+
+    while (this.not_eof() && this.at().type != TokenType.CloseBrace) {
+      body.push(this.parse_stmt());
+    }
+
+    this.expect(
+      TokenType.CloseBrace,
+      "Closing brace expected inside if statement"
+    );
+
+    return {
+      kind: "WhileStatement",
+      condition,
+      body,
+    } as WhileStatement;
+  }
+
+
 
   private parse_if_statement(): Stmt {
     this.eat();
