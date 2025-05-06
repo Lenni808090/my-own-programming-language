@@ -78,7 +78,7 @@ export function eval_if_statement(
   const condition = evaluate(statement.condition, env);
 
   if (condition.type === "boolean" && (condition as BooleanVal).value) {
-    let result: RuntimeVal = MK_NULL();
+    const result: RuntimeVal = MK_NULL();
 
     for (const stmt of statement.thenBranch) {
         const evaluated = evaluate(stmt, env);
@@ -90,7 +90,7 @@ export function eval_if_statement(
     return result;
   } else if (statement.elseIfBranches && statement.elseIfBranches.length > 0) {
 
-    let result: RuntimeVal = MK_NULL();
+    const result: RuntimeVal = MK_NULL();
 
     for (const elseifBranch of statement.elseIfBranches) {
       const condition = evaluate(elseifBranch.condition, env);
@@ -107,7 +107,7 @@ export function eval_if_statement(
 
     return result;
   }else if(statement.elseBranch && statement.elseBranch.length > 0){
-	let result: RuntimeVal = MK_NULL();
+	const result: RuntimeVal = MK_NULL();
 
     for (const stmt of statement.thenBranch) {
         const evaluated = evaluate(stmt, env);

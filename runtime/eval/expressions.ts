@@ -5,7 +5,6 @@ import {
 	Identifier,
 	ObjectLiteral,
 } from "../../frontend/ast.ts";
-import { TokenType } from "../../frontend/lexer.ts";
 import Environment from "../environment.ts";
 import { evaluate } from "../interpreter.ts";
 import {

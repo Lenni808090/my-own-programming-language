@@ -1,5 +1,6 @@
 export enum TokenType {
   Number,
+  String,
   Identifier,
 
   Let,
@@ -131,6 +132,24 @@ export function tokenize(sourceCode: string): Token[] {
         } else {
             tokens.push(token(src.shift(), TokenType.GreaterThen));
         }
+    }else if(src[0] == `"`){
+      if(src.length > 1){
+        src.shift();
+        let str = "";
+
+        while(src[0] != `"`){
+          str += src.shift();
+        }
+
+        if (src.length === 0) {
+          console.error("Unterminated string literal.");
+          Deno.exit(1);
+        }
+
+        src.shift();
+
+        tokens.push(token(str, TokenType.String));
+      }
     } else if (src[0] == ";") {
       tokens.push(token(src.shift(), TokenType.Semicolon));
     } else if (src[0] == ":") {

@@ -16,6 +16,7 @@ import {
   IfStatement,
   ReturnStatement,
   WhileStatement,
+  StringLiteral,
 } from "./ast.ts";
 
 import { Token, tokenize, TokenType } from "./lexer.ts";
@@ -572,6 +573,13 @@ export default class Parser {
           "Unexpected token found inside parenthesised expression. Expected closing parenthesis."
         ); // closing paren
         return value;
+      }
+
+      case TokenType.String:{
+        return{
+          kind:"StringLiteral",
+          value: this.eat().value
+        } as StringLiteral
       }
 
       // Unidentified Tokens and Invalid Code Reached

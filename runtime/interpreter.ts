@@ -1,4 +1,4 @@
-import { NumberVal, RuntimeVal } from "./values.ts";
+import { NumberVal, RuntimeVal, StringVal } from "./values.ts";
 import {
 	AssignmentExpr,
 	BinaryExpr,
@@ -11,6 +11,7 @@ import {
 	Program,
 	ReturnStatement,
 	Stmt,
+	StringLiteral,
 	VarDeclaration,
   WhileStatement,
 } from "../frontend/ast.ts";
@@ -38,6 +39,11 @@ export function evaluate(astNode: Stmt, env: Environment): RuntimeVal {
 				value: (astNode as NumericLiteral).value,
 				type: "number",
 			} as NumberVal;
+		case "StringLiteral":
+			return{
+				value: (astNode as StringLiteral).value,
+				type: "string"
+			} as StringVal	
 		case "Identifier":
 			return eval_identifier(astNode as Identifier, env);
 		case "ObjectLiteral":
