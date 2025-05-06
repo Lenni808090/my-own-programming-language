@@ -6,9 +6,9 @@ fn add(val1 , val2) {
 fn printValues(){
   let i = 0;
   while(i<5){
-    print(add(1,2))
-    i = i + 1
+    print(add(1,2));
+    i = i + 1;
   }
 }
 
-printValues()
+printValues();

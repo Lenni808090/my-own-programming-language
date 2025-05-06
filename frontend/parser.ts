@@ -76,8 +76,12 @@ export default class Parser {
         return this.parse_return_statement();
       case TokenType.While:
         return this.parse_while_statement();
-      default:
-        return this.parse_expr();
+      default: {
+        const expr = this.parse_expr();
+        this.expect(TokenType.Semicolon, "Semicolon missing in the end of line");
+        return expr;
+      }
+      
     }
   }
 

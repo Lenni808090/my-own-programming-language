@@ -142,9 +142,20 @@ export function tokenize(sourceCode: string): Token[] {
     } else {
       if (isint(src[0])) {
         let num = "";
-        while (src.length > 0 && isint(src[0])) {
+        let hasDot = false;
+      
+        while (src.length > 0 && (isint(src[0]) || (!hasDot && src[0] === '.'))) {
+          if (src[0] === '.') {
+            hasDot = true;
+          }
           num += src.shift();
         }
+      
+        if (num.endsWith('.') || num === '.') {
+          console.error("Invalid float literal:", num);
+          Deno.exit(1);
+        }
+      
         tokens.push(token(num, TokenType.Number));
       } else if (isalpha(src[0])) {
         let ident = "";
