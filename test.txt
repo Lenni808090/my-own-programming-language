@@ -1,3 +1,10 @@
-let str = "hi";
+const person = {
+  name: "Alice",
+  age: 30,
+  isStudent: false,
+  haus: {
+    isHoch: false,
+  }
+};
 
-print(str);
+print(person.haus.isHoch);

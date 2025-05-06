@@ -3,6 +3,7 @@ import {
 	BinaryExpr,
 	CallExpr,
 	Identifier,
+	MemberExpr,
 	ObjectLiteral,
 } from "../../frontend/ast.ts";
 import Environment from "../environment.ts";
@@ -163,4 +164,43 @@ export function eval_call_expr(expr: CallExpr, env: Environment): RuntimeVal {
 	}
 
 	throw "Cannot call value that is not a function: " + JSON.stringify(fn);
+}
+
+export function eval_member_expr(expr: MemberExpr, env: Environment): RuntimeVal {
+    const obj = evaluate(expr.object, env);
+    if (obj.type !== "object") {
+        throw `Cannot access properties of non-object value: ${JSON.stringify(obj)}`;
+    }
+
+    const objectVal = obj as ObjectVal;
+    
+    if (expr.computed) {
+        // Handle computed properties obj[expr]
+        const property = evaluate(expr.property, env);
+        let propName: string;
+        
+        // Handle different types of property access
+        if (property.type === "number") {
+            propName = (property as NumberVal).value.toString();
+        } else if (property.type === "string") {
+            propName = (property as any).value;
+        } else {
+            throw `Invalid property type: ${property.type}. Expected string or number.`;
+        }
+
+        if (!objectVal.properties.has(propName)) {
+            return MK_NULL();
+        }
+        return objectVal.properties.get(propName) as RuntimeVal;
+    } else {
+        // Handle dot notation obj.prop
+        if (expr.property.kind !== "Identifier") {
+            throw `Invalid property access: ${JSON.stringify(expr.property)}`;
+        }
+        const propName = (expr.property as Identifier).symbol;
+        if (!objectVal.properties.has(propName)) {
+            return MK_NULL();
+        }
+        return objectVal.properties.get(propName) as RuntimeVal;
+    }
 }

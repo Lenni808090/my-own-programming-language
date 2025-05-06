@@ -6,6 +6,7 @@ import {
 	FunctionDeclaration,
 	Identifier,
 	IfStatement,
+	MemberExpr,
 	NumericLiteral,
 	ObjectLiteral,
 	Program,
@@ -29,6 +30,7 @@ import {
 	eval_binary_expr,
 	eval_call_expr,
 	eval_identifier,
+	eval_member_expr,
 	eval_object_expr,
 } from "./eval/expressions.ts";
 
@@ -60,14 +62,14 @@ export function evaluate(astNode: Stmt, env: Environment): RuntimeVal {
 			return eval_while_statement(astNode as WhileStatement, env)	;
 		case "Program":
 			return eval_program(astNode as Program, env);
-		// Handle statements
 		case "VarDeclaration":
 			return eval_var_declaration(astNode as VarDeclaration, env);
 		case "FunctionDeclaration":
 			return eval_function_declaration(astNode as FunctionDeclaration, env);
 		case "ReturnStatement":
 			return eval_return_statement(astNode as ReturnStatement, env)	
-		// Handle unimplimented ast types as error.
+		case "MemberExpr":
+			return eval_member_expr(astNode as MemberExpr, env)	
 		default:
 			console.error(
 				"This AST Node has not yet been setup for interpretation.\n",
