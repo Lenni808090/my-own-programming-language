@@ -13,8 +13,11 @@ export function eval_program(program: Program, env: Environment): RuntimeVal {
   let lastEvaluated: RuntimeVal = MK_NULL();
   for (const statement of program.body) {
     lastEvaluated = evaluate(statement, env);
+    if (statement.kind === "ReturnStatement") {
+      return lastEvaluated;
+    }
   }
-  return MK_NULL(); // Only return null by default
+  return MK_NULL(); 
 }
 
 export function eval_var_declaration(
@@ -54,7 +57,11 @@ export function eval_if_statement(
     let result: RuntimeVal = MK_NULL();
 
     for (const stmt of statement.thenBranch) {
-      result = evaluate(stmt, env);
+		const evaluated = evaluate(stmt, env);
+		if (stmt.kind === "ReturnStatement") {
+			result = evaluated;
+			break;
+		}
     }
 
     return result;
@@ -67,7 +74,11 @@ export function eval_if_statement(
       if (condition.type == "boolean" && (condition as BooleanVal).value) {
 
         for (const stmt of elseifBranch.body) {
-          result = evaluate(stmt, env);
+			const evaluated = evaluate(stmt, env);
+			if (stmt.kind === "ReturnStatement") {
+			  result = evaluated;
+			  break;
+			}
         }
 
         break
@@ -79,7 +90,11 @@ export function eval_if_statement(
 	let result: RuntimeVal = MK_NULL();
 
     for (const stmt of statement.thenBranch) {
-      result = evaluate(stmt, env);
+		const evaluated = evaluate(stmt, env);
+		if (stmt.kind === "ReturnStatement") {
+		  result = evaluated;
+		  break;
+		}
     }
 
     return result;

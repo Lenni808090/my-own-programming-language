@@ -5,6 +5,7 @@ import {
 	Identifier,
 	ObjectLiteral,
 } from "../../frontend/ast.ts";
+import { TokenType } from "../../frontend/lexer.ts";
 import Environment from "../environment.ts";
 import { evaluate } from "../interpreter.ts";
 import {
@@ -152,7 +153,11 @@ export function eval_call_expr(expr: CallExpr, env: Environment): RuntimeVal {
 		let result: RuntimeVal = MK_NULL();
 		// Evaluate the function body line by line
 		for (const stmt of func.body) {
-			result = evaluate(stmt, scope);
+			const evaluated = evaluate(stmt, scope);
+			if(stmt.kind == "ReturnStatement"){
+				result = evaluated;
+				break;
+			}
 		}
 
 		return result;
