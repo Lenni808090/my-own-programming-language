@@ -8,7 +8,8 @@ export type ValueType =
     | "object"
     | "native-fn"
     | "function"
-    | "string";
+    | "string"
+    | "array";
 
 export interface RuntimeVal {
     type: ValueType;
@@ -40,6 +41,11 @@ export interface NumberVal extends RuntimeVal {
 export interface StringVal extends RuntimeVal {
     type: "string";
     value: string;
+}
+
+export interface ArrayVal extends RuntimeVal {
+    type: "array";
+    value: RuntimeVal[];
 }
 
 

@@ -13,7 +13,8 @@ export type NodeType =
     | "BinaryExpr"
     | "IfStatement"
     | "ReturnStatement"
-    | "WhileStatement";
+    | "WhileStatement"
+    | "ArrayLiteral";
 
 export interface Stmt {
     kind: NodeType;
@@ -88,6 +89,11 @@ export interface Identifier extends Expr {
 export interface NumericLiteral extends Expr {
     kind: "NumericLiteral";
     value: number;
+}
+
+export interface ArrayLiteral extends Expr {
+    kind: "ArrayLiteral";
+    value: Expr[];
 }
 
 export interface StringLiteral extends Expr {

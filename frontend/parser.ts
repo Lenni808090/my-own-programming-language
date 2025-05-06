@@ -17,6 +17,7 @@ import {
   ReturnStatement,
   WhileStatement,
   StringLiteral,
+  ArrayLiteral,
 } from "./ast.ts";
 
 import { Token, tokenize, TokenType } from "./lexer.ts";
@@ -429,6 +430,7 @@ export default class Parser {
     return left;
   }
 
+
   // Handle Multiplication, Division & Modulo Operations
   private parse_multiplicitave_expr(): Expr {
     let left = this.parse_call_member_expr();
@@ -573,6 +575,23 @@ export default class Parser {
           "Unexpected token found inside parenthesised expression. Expected closing parenthesis."
         ); // closing paren
         return value;
+      }
+
+      case TokenType.OpenBracket:{
+        this.eat();
+        const elements: Expr[] = [];
+        while(this.at().type != TokenType.CloseBracket){
+          const value = this.parse_expr();
+          elements.push(value);
+          if(this.at().type == TokenType.Comma){
+            this.eat();
+          }
+        }
+        this.expect(TokenType.CloseBracket, "Expected closing bracket for array literal");
+        return {
+          kind:"ArrayLiteral",
+          value:  elements,
+        } as ArrayLiteral
       }
 
       case TokenType.String: {

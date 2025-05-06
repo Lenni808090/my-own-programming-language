@@ -1,4 +1,5 @@
 import {
+  ArrayLiteral,
   AssignmentExpr,
   BinaryExpr,
   CallExpr,
@@ -9,6 +10,7 @@ import {
 import Environment from "../environment.ts";
 import { evaluate } from "../interpreter.ts";
 import {
+  ArrayVal,
   BooleanVal,
   FunctionValue,
   MK_BOOL,
@@ -165,6 +167,20 @@ export function eval_object_expr(
   return object;
 }
 
+export function eval_array_expr(array: ArrayLiteral, env: Environment) {
+  const arrayValues: RuntimeVal[] = [];
+
+  for (const expr of array.value) {
+    const value = evaluate(expr, env);
+    arrayValues.push(value);
+  }
+
+  return {
+    type: "array",
+    value: arrayValues,
+  } as ArrayVal;
+}
+
 export function eval_call_expr(expr: CallExpr, env: Environment): RuntimeVal {
   const args = expr.args.map((arg) => evaluate(arg, env));
   const fn = evaluate(expr.caller, env);
@@ -203,45 +219,56 @@ export function eval_call_expr(expr: CallExpr, env: Environment): RuntimeVal {
 }
 
 export function eval_member_expr(
-  expr: MemberExpr,
-  env: Environment
-): RuntimeVal {
-  const obj = evaluate(expr.object, env);
-  if (obj.type !== "object") {
-    throw `Cannot access properties of non-object value: ${JSON.stringify(
-      obj
-    )}`;
-  }
-
-  const objectVal = obj as ObjectVal;
-
-  if (expr.computed) {
-    // Handle computed properties obj[expr]
-    const property = evaluate(expr.property, env);
-    let propName: string;
-
-    // Handle different types of property access
-    if (property.type === "number") {
-      propName = (property as NumberVal).value.toString();
-    } else if (property.type === "string") {
-      propName = (property as any).value;
-    } else {
-      throw `Invalid property type: ${property.type}. Expected string or number.`;
-    }
-
-    if (!objectVal.properties.has(propName)) {
-      return MK_NULL();
-    }
-    return objectVal.properties.get(propName) as RuntimeVal;
-  } else {
-    // Handle dot notation obj.prop
-    if (expr.property.kind !== "Identifier") {
-      throw `Invalid property access: ${JSON.stringify(expr.property)}`;
-    }
-    const propName = (expr.property as Identifier).symbol;
-    if (!objectVal.properties.has(propName)) {
-      return MK_NULL();
-    }
-    return objectVal.properties.get(propName) as RuntimeVal;
-  }
+	expr: MemberExpr,
+	env: Environment
+  ): RuntimeVal {
+	const target = evaluate(expr.object, env);
+  
+	if (expr.computed) {
+	  const property = evaluate(expr.property, env);
+  
+	  if (target.type === "array") {
+		if (property.type !== "number") {
+		  throw "array index must be number";
+		}
+		const index = (property as NumberVal).value ;
+		const array = target as ArrayVal;
+  
+		if (index < 0 || index >= array.value.length) {
+		  return MK_NULL();
+		}
+  
+		return array.value[index - 1];
+	  } else if (target.type === "object") {
+		let propName: string;
+		const objectVal = target as ObjectVal;
+  
+		if (property.type === "number") {
+		  propName = (property as NumberVal).value.toString();
+		} else if (property.type === "string") {
+		  // deno-lint-ignore no-explicit-any
+		  propName = (property as any).value;
+		} else {
+		  throw `Invalid property type: ${property.type}. Expected string or number.`;
+		}
+  
+		if (!objectVal.properties.has(propName)) {
+		  return MK_NULL();
+		}
+		return objectVal.properties.get(propName) as RuntimeVal;
+	  } else {
+		throw `Cannot use computed property on type: ${target.type}`;
+	  }
+	} else {
+	  if (target.type !== "object") {
+		throw `Cannot use dot notation on non-object type: ${target.type}`;
+	  }
+	  const objectVal = target as ObjectVal;
+	  if (expr.property.kind !== "Identifier") {
+		throw `Invalid property access: ${JSON.stringify(expr.property)}`;
+	  }
+	  const propName = (expr.property as Identifier).symbol;
+	  return objectVal.properties.get(propName) ?? MK_NULL();
+	}
 }
+  

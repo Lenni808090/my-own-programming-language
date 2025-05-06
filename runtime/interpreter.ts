@@ -1,5 +1,6 @@
 import { NumberVal, RuntimeVal, StringVal } from "./values.ts";
 import {
+ArrayLiteral,
 	AssignmentExpr,
 	BinaryExpr,
 	CallExpr,
@@ -26,6 +27,7 @@ import {
   eval_while_statement,
 } from "./eval/statements.ts";
 import {
+eval_array_expr,
 	eval_assignment,
 	eval_binary_expr,
 	eval_call_expr,
@@ -70,6 +72,8 @@ export function evaluate(astNode: Stmt, env: Environment): RuntimeVal {
 			return eval_return_statement(astNode as ReturnStatement, env)	
 		case "MemberExpr":
 			return eval_member_expr(astNode as MemberExpr, env)	
+		case "ArrayLiteral":
+			return eval_array_expr(astNode as ArrayLiteral, env)	
 		default:
 			console.error(
 				"This AST Node has not yet been setup for interpretation.\n",
