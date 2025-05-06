@@ -10,7 +10,8 @@ export type NodeType =
     | "NumericLiteral"
     | "Identifier"
     | "BinaryExpr"
-    | "IfStatement";
+    | "IfStatement"
+    | "ReturnStatement";
 
 export interface Stmt {
     kind: NodeType;
@@ -90,4 +91,9 @@ export interface Property extends Expr {
 export interface ObjectLiteral extends Expr {
     kind: "ObjectLiteral";
     properties: Property[];
+}
+
+export interface ReturnStatement extends Expr {
+    kind:"ReturnStatement";
+    value?: Expr;
 }

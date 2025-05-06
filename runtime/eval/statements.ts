@@ -1,71 +1,88 @@
 import {
-	FunctionDeclaration,
-	IfStatement,
-	Program,
-	VarDeclaration,
+  FunctionDeclaration,
+  IfStatement,
+  Program,
+  VarDeclaration,
 } from "../../frontend/ast.ts";
 import Environment from "../environment.ts";
 import { evaluate } from "../interpreter.ts";
 import { BooleanVal, FunctionValue, MK_NULL, RuntimeVal } from "../values.ts";
 
 export function eval_program(program: Program, env: Environment): RuntimeVal {
-	let lastEvaluated: RuntimeVal = MK_NULL();
-	for (const statement of program.body) {
-		lastEvaluated = evaluate(statement, env);
-	}
-	return lastEvaluated;
+  let lastEvaluated: RuntimeVal = MK_NULL();
+  for (const statement of program.body) {
+    lastEvaluated = evaluate(statement, env);
+  }
+  return lastEvaluated;
 }
 
 export function eval_var_declaration(
-	declaration: VarDeclaration,
-	env: Environment
+  declaration: VarDeclaration,
+  env: Environment
 ): RuntimeVal {
-	const value = declaration.value
-		? evaluate(declaration.value, env)
-		: MK_NULL();
+  const value = declaration.value
+    ? evaluate(declaration.value, env)
+    : MK_NULL();
 
-	return env.declareVar(declaration.identifier, value, declaration.constant);
+  return env.declareVar(declaration.identifier, value, declaration.constant);
 }
 
 export function eval_function_declaration(
-	declaration: FunctionDeclaration,
-	env: Environment
+  declaration: FunctionDeclaration,
+  env: Environment
 ): RuntimeVal {
-	// Create new function scope
-	const fn = {
-		type: "function",
-		name: declaration.name,
-		parameters: declaration.parameters,
-		declarationEnv: env,
-		body: declaration.body,
-	} as FunctionValue;
+  // Create new function scope
+  const fn = {
+    type: "function",
+    name: declaration.name,
+    parameters: declaration.parameters,
+    declarationEnv: env,
+    body: declaration.body,
+  } as FunctionValue;
 
-	return env.declareVar(declaration.name, fn, true);
+  return env.declareVar(declaration.name, fn, true);
 }
 
-export function eval_if_statement(statement: IfStatement, env: Environment): RuntimeVal{
-	const condition = evaluate(statement.condition, env);
-	
-	if(condition.type === "boolean" && (condition as BooleanVal).value){
+export function eval_if_statement(
+  statement: IfStatement,
+  env: Environment
+): RuntimeVal {
+  const condition = evaluate(statement.condition, env);
 
-		let result: RuntimeVal = MK_NULL();
+  if (condition.type === "boolean" && (condition as BooleanVal).value) {
+    let result: RuntimeVal = MK_NULL();
 
-		for (const stmt of statement.thenBranch) {
-			result = evaluate(stmt, env);
-		}
+    for (const stmt of statement.thenBranch) {
+      result = evaluate(stmt, env);
+    }
 
-		return result;
+    return result;
+  } else if (statement.elseIfBranches && statement.elseIfBranches.length > 0) {
 
-	}else if(statement.elseBranch){
-		let result: RuntimeVal = MK_NULL();
+    let result: RuntimeVal = MK_NULL();
 
-		for(const stmt of statement.elseBranch){
-			result = evaluate(stmt, env);
-		}
+    for (const elseifBranch of statement.elseIfBranches) {
+      const condition = evaluate(elseifBranch.condition, env);
+      if (condition.type == "boolean" && (condition as BooleanVal).value) {
 
-		return result;
-		
-	}
+        for (const stmt of elseifBranch.body) {
+          result = evaluate(stmt, env);
+        }
 
-	return MK_NULL();
+        break
+      }
+    }
+
+    return result;
+  }else if(statement.elseBranch && statement.elseBranch.length > 0){
+	let result: RuntimeVal = MK_NULL();
+
+    for (const stmt of statement.thenBranch) {
+      result = evaluate(stmt, env);
+    }
+
+    return result;
+  }
+
+  return MK_NULL();
 }

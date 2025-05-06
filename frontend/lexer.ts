@@ -7,15 +7,11 @@ export enum TokenType {
 
   Fn,
 
-  If,
-  Else,
+  If,Else,
 
-  GreaterThen,
-  LessThen,
-  GreaterThenEquals,
-  LessThenEquals,
-  EqualsEquals,
-  NotEquals,
+  GreaterThen,LessThen,
+  GreaterThenEquals,LessThenEquals,
+  EqualsEquals,NotEquals,
 
   BinaryOperator,
   Equals,
@@ -33,6 +29,9 @@ export enum TokenType {
   CloseBracket,
 
   EOF,
+
+
+  Return,
 }
 
 const KEYWORDS: Record<string, TokenType> = {
@@ -41,6 +40,7 @@ const KEYWORDS: Record<string, TokenType> = {
   fn: TokenType.Fn,
   if: TokenType.If,
   else: TokenType.Else,
+  return: TokenType.Return,
 };
 
 export interface Token {

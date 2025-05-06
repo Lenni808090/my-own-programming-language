@@ -70,6 +70,8 @@ export default class Parser {
         return this.parse_fn_declaration();
       case TokenType.If:
         return this.parse_if_statement();
+      case TokenType.Return:
+        return this.parse_return_statement();
       default:
         return this.parse_expr();
     }
@@ -138,7 +140,7 @@ export default class Parser {
         if(!elseIfBranches){
           elseIfBranches = [];
         }
-        
+
         elseIfBranches.push({ condition: elseIfCondition, body: elseIfBody });
       } else {
         this.expect(

@@ -14,4 +14,5 @@ async function run(filename: string) {
 	
 
 	const result = evaluate(program, env);
+	console.log(result);
 }
