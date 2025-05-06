@@ -77,7 +77,6 @@ export default class Parser {
 
   parse_if_statement(): Stmt {
     this.eat();
-
     this.expect(
       TokenType.OpenParen,
       "Expected opening parenthesis after if keyword"
@@ -104,30 +103,67 @@ export default class Parser {
     );
 
     let elseBranch: Stmt[] | undefined;
+    let elseIfBranches: Array<{ condition: Expr; body: Stmt[] }> | undefined;
 
-    if (this.at().type == TokenType.Else) {
+    while (this.at().type == TokenType.Else) {
       this.eat();
-      this.expect(
-        TokenType.OpenBrace,
-        "Expected opening brace after else stmt"
-      );
-      
-      elseBranch = [];
-      
-      while (this.not_eof() && this.at().type != TokenType.CloseBrace) {
-        elseBranch.push(this.parse_stmt());
-      }
+      if (this.at().type == TokenType.If) {
+        this.eat();
+        this.expect(
+          TokenType.OpenParen,
+          "Expected opening brace after else stmt"
+        );
 
-      this.expect(
-        TokenType.CloseBrace,
-        "Expected closing brace after else stmt"
-      );
+        const elseIfCondition = this.parse_expr();
+
+        this.expect(
+          TokenType.CloseParen,
+          "Expected closing parenthesis after comparision expr"
+        );
+        this.expect(
+          TokenType.OpenBrace,
+          "Expected opening brace after if comparision"
+        );
+        const elseIfBody: Stmt[] = [];
+
+        while (this.not_eof() && this.at().type != TokenType.CloseBrace) {
+          elseIfBody.push(this.parse_stmt());
+        }
+
+        this.expect(
+          TokenType.CloseBrace,
+          "Closing brace expected inside if statement"
+        );
+        
+        if(!elseIfBranches){
+          elseIfBranches = [];
+        }
+        
+        elseIfBranches.push({ condition: elseIfCondition, body: elseIfBody });
+      } else {
+        this.expect(
+          TokenType.OpenBrace,
+          "Expected opening brace after else stmt"
+        );
+
+        elseBranch = [];
+
+        while (this.not_eof() && this.at().type != TokenType.CloseBrace) {
+          elseBranch.push(this.parse_stmt());
+        }
+
+        this.expect(
+          TokenType.CloseBrace,
+          "Expected closing brace after else stmt"
+        );
+      }
     }
 
     return {
       kind: "IfStatement",
       condition,
       thenBranch,
+      elseIfBranches,
       elseBranch,
     } as IfStatement;
   }

@@ -54,6 +54,7 @@ export interface IfStatement extends Stmt {
     kind: "IfStatement";
     condition: Expr;
     thenBranch: Stmt[];
+    elseIfBranches?: Array<{condition: Expr, body: Stmt[]}>;
     elseBranch?: Stmt[];
 }
 
