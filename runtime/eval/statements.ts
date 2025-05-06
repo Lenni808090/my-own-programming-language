@@ -3,6 +3,7 @@ import {
   IfStatement,
   Program,
   VarDeclaration,
+  ReturnStatement
 } from "../../frontend/ast.ts";
 import Environment from "../environment.ts";
 import { evaluate } from "../interpreter.ts";
@@ -13,7 +14,7 @@ export function eval_program(program: Program, env: Environment): RuntimeVal {
   for (const statement of program.body) {
     lastEvaluated = evaluate(statement, env);
   }
-  return lastEvaluated;
+  return MK_NULL(); // Only return null by default
 }
 
 export function eval_var_declaration(
@@ -85,4 +86,11 @@ export function eval_if_statement(
   }
 
   return MK_NULL();
+}
+
+
+
+export function eval_return_statement(returnStmt: ReturnStatement, env:Environment){
+	const returnValue = returnStmt.value ? evaluate(returnStmt.value, env) : MK_NULL();
+	return returnValue;
 }

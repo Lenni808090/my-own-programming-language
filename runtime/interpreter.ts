@@ -9,6 +9,7 @@ import {
 	NumericLiteral,
 	ObjectLiteral,
 	Program,
+	ReturnStatement,
 	Stmt,
 	VarDeclaration,
 } from "../frontend/ast.ts";
@@ -17,6 +18,7 @@ import {
 	eval_function_declaration,
 	eval_if_statement,
 	eval_program,
+	eval_return_statement,
 	eval_var_declaration,
 } from "./eval/statements.ts";
 import {
@@ -53,6 +55,8 @@ export function evaluate(astNode: Stmt, env: Environment): RuntimeVal {
 			return eval_var_declaration(astNode as VarDeclaration, env);
 		case "FunctionDeclaration":
 			return eval_function_declaration(astNode as FunctionDeclaration, env);
+		case "ReturnStatement":
+			return eval_return_statement(astNode as ReturnStatement, env)	
 		// Handle unimplimented ast types as error.
 		default:
 			console.error(

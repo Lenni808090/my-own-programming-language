@@ -14,6 +14,7 @@ import {
   VarDeclaration,
   FunctionDeclaration,
   IfStatement,
+  ReturnStatement,
 } from "./ast.ts";
 
 import { Token, tokenize, TokenType } from "./lexer.ts";
@@ -77,7 +78,25 @@ export default class Parser {
     }
   }
 
-  parse_if_statement(): Stmt {
+  private parse_return_statement(): Stmt {
+    this.eat();
+
+    if (this.at().type == TokenType.Semicolon) {
+      this.eat();
+      return { kind: "ReturnStatement" } as ReturnStatement;
+    }
+
+    const value = this.parse_expr();
+
+    this.expect(
+      TokenType.Semicolon,
+      "Expected semicolon after return statement"
+    );
+    
+    return { kind: "ReturnStatement", value: value } as ReturnStatement;
+  }
+
+  private parse_if_statement(): Stmt {
     this.eat();
     this.expect(
       TokenType.OpenParen,
@@ -136,8 +155,8 @@ export default class Parser {
           TokenType.CloseBrace,
           "Closing brace expected inside if statement"
         );
-        
-        if(!elseIfBranches){
+
+        if (!elseIfBranches) {
           elseIfBranches = [];
         }
 
