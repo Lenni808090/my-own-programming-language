@@ -3,7 +3,8 @@ import {
   IfStatement,
   Program,
   VarDeclaration,
-  ReturnStatement
+  ReturnStatement,
+  WhileStatement
 } from "../../frontend/ast.ts";
 import Environment from "../environment.ts";
 import { evaluate } from "../interpreter.ts";
@@ -47,6 +48,29 @@ export function eval_function_declaration(
   return env.declareVar(declaration.name, fn, true);
 }
 
+
+export function eval_while_statement(statement: WhileStatement, env: Environment){
+
+	const result: RuntimeVal = MK_NULL();
+
+	while(true){
+		const condition = evaluate(statement.condition, env)
+		if(!(condition.type === "boolean" && (condition as BooleanVal).value)){
+			break
+		}
+
+		for (const stmt of statement.body) {
+			const evaluated = evaluate(stmt, env);
+			if (stmt.kind === "ReturnStatement") {
+				return evaluated;
+			}
+		}
+	}
+
+	return result;
+}
+
+
 export function eval_if_statement(
   statement: IfStatement,
   env: Environment
@@ -57,11 +81,10 @@ export function eval_if_statement(
     let result: RuntimeVal = MK_NULL();
 
     for (const stmt of statement.thenBranch) {
-		const evaluated = evaluate(stmt, env);
-		if (stmt.kind === "ReturnStatement") {
-			result = evaluated;
-			break;
-		}
+        const evaluated = evaluate(stmt, env);
+        if (stmt.kind === "ReturnStatement") {
+            return evaluated; 
+        }
     }
 
     return result;
@@ -72,16 +95,13 @@ export function eval_if_statement(
     for (const elseifBranch of statement.elseIfBranches) {
       const condition = evaluate(elseifBranch.condition, env);
       if (condition.type == "boolean" && (condition as BooleanVal).value) {
-
         for (const stmt of elseifBranch.body) {
-			const evaluated = evaluate(stmt, env);
-			if (stmt.kind === "ReturnStatement") {
-			  result = evaluated;
-			  break;
-			}
+            const evaluated = evaluate(stmt, env);
+            if (stmt.kind === "ReturnStatement") {
+                return evaluated;  
+            }
         }
-
-        break
+        break;
       }
     }
 
@@ -90,11 +110,10 @@ export function eval_if_statement(
 	let result: RuntimeVal = MK_NULL();
 
     for (const stmt of statement.thenBranch) {
-		const evaluated = evaluate(stmt, env);
-		if (stmt.kind === "ReturnStatement") {
-		  result = evaluated;
-		  break;
-		}
+        const evaluated = evaluate(stmt, env);
+        if (stmt.kind === "ReturnStatement") {
+            return evaluated;  
+        }
     }
 
     return result;

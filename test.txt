@@ -1,15 +1,14 @@
-fn rAdder(x, y){
-  return 5;
-  let added = x + y;
+fn add(val1 , val2) { 
+  let added = val1 + val2; 
   return added;
+} 
+
+fn printValues(){
+  let i = 0;
+  while(i<5){
+    print(add(1,2))
+    i = i + 1
+  }
 }
 
-fn adder(x, y){
-  let added = x + y;
-}
-
-let x = rAdder(1,2);
-let y = adder(1,2);
-
-print(x)
-print(y)
+printValues()

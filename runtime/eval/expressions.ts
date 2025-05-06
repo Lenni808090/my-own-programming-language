@@ -53,16 +53,16 @@ function eval_comparission_expr( lhs: NumberVal, rhs: NumberVal, operator: strin
 			result = lhs.value != rhs.value;
 			break;
 		case "<":
-			result = lhs.value < lhs.value;
+			result = lhs.value < rhs.value;
 			break;
 		case ">":
-			result = lhs.value > lhs.value;
+			result = lhs.value > rhs.value;
 			break;
 		case ">=":
-			result = lhs.value >= lhs.value;
+			result = lhs.value >= rhs.value;
 			break;
 		case "<=":
-			result = lhs.value <= lhs.value;	
+			result = lhs.value <= rhs.value;	
 			break;	
 		default:
 			throw "unknown operator" + operator	

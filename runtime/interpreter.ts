@@ -12,6 +12,7 @@ import {
 	ReturnStatement,
 	Stmt,
 	VarDeclaration,
+  WhileStatement,
 } from "../frontend/ast.ts";
 import Environment from "./environment.ts";
 import {
@@ -20,6 +21,7 @@ import {
 	eval_program,
 	eval_return_statement,
 	eval_var_declaration,
+  eval_while_statement,
 } from "./eval/statements.ts";
 import {
 	eval_assignment,
@@ -47,7 +49,9 @@ export function evaluate(astNode: Stmt, env: Environment): RuntimeVal {
 		case "BinaryExpr":
 			return eval_binary_expr(astNode as BinaryExpr, env);
 		case "IfStatement":
-			return eval_if_statement(astNode as IfStatement, env)
+			return eval_if_statement(astNode as IfStatement, env);
+		case "WhileStatement":
+			return eval_while_statement(astNode as WhileStatement, env)	;
 		case "Program":
 			return eval_program(astNode as Program, env);
 		// Handle statements
